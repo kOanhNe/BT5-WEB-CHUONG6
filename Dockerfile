@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim AS base
+FROM openjdk:24-jdk-slim AS base
 
 # Cài wget + tar
 RUN apt-get update && apt-get install -y wget tar && rm -rf /var/lib/apt/lists/*
@@ -12,10 +12,9 @@ RUN wget https://downloads.apache.org/tomcat/tomcat-10/v10.1.44/bin/apache-tomca
 ENV CATALINA_HOME=/usr/local/tomcat
 ENV PATH="$CATALINA_HOME/bin:$PATH"
 
-# Xóa webapps mặc định và copy WAR
+# Copy war vào Tomcat
 RUN rm -rf /usr/local/tomcat/webapps/*
 COPY ch06_ex1_email.war /usr/local/tomcat/webapps/ROOT.war
 
-# Render cần PORT env
-ENV PORT=10000
-CMD sed -i "s/8080/${PORT}/" /usr/local/tomcat/conf/server.xml && catalina.sh run
+EXPOSE 8080
+CMD ["catalina.sh", "run"]
